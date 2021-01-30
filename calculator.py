@@ -1,15 +1,11 @@
-import re
-
 class Calculator:
   def is_equation(self, msg):
-    msg = msg.replace("(", "")
-    msg = msg.replace(")", "")
-    return re.match(r"^[\s]*[\d\+\-\*\/]+[\w\s]*$", msg)
-
-  def calculate(self, msg):
-    result = ""
     try:
-      result = eval(msg)
+      self.result = eval(msg)
+      return True
     except:
-      result = "Invalid Equation!"
-    return result
+      self.result = "Invalid math expression!"
+      return False
+
+  def calculate(self):
+    return self.result

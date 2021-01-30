@@ -7,15 +7,41 @@ from calculator import Calculator
 from gamble import Gamble
 from corona import Corona
 from exchange import Exchange
+from investing import Investing
+from timer import Timer
+from keep_alive import keep_alive
+from help_me import help1,help2
 
 client = discord.Client()
 gif = Gif(os.getenv('GIPHY_API_KEY'))
 blockchain = Blockchain(os.getenv('BTC_API_KEY'))
 corona = Corona(os.getenv('RAPID_API_KEY'))
 exchange = Exchange(os.getenv('RAPID_API_KEY'))
+investing = Investing()
 quote = Quote()
 calculator = Calculator()
 gamble = Gamble()
+
+category_words={
+  "hi": ['hi', 'hello', 'hey'],
+  "pm": ['pm', 'private', 'dm'],
+  "timer": ['timer', 'time', 't'],
+  "inspire": ['inspire', 'ins'],
+  "bitcoin": ['bitcoin', 'xrp', 'eth', 'btc', 'b'],
+  "gif": ['gif', 'g'],
+  "coin": ['coin', 'toss', 'flip', 'heads', 'tails', 'c'],
+  "random": ['random', 'rand', 'r'],
+  "corona": ['corona', 'covid', 'korona'],
+  "exchange": ['exchange', 'convert', 'e', 'dollar', 'dolar', 'usd'],
+  "investing": ['investing', 'inv', 'i'],
+  "help": ['help', 'h']
+}
+
+
+def is_starts_with(msg, category):
+  command = msg.split()[0]
+  return command in category_words[category]
+
 
 @client.event
 async def on_ready():
@@ -30,25 +56,35 @@ async def on_message(message):
 
   if msg.startswith('!'):
     msg = msg[1:]
-    if "hello" in msg or "hi" in msg:
+    if is_starts_with(msg, "hi"):
       await message.channel.send('Hello!')
-    elif "inspire" in msg:
+    elif is_starts_with(msg, "help"):
+      await message.channel.send(help1)
+      await message.channel.send(help2)
+    elif is_starts_with(msg, 'pm'):
+      await message.author.send("HELLO ;)")
+    elif is_starts_with(msg, 'timer'):
+      timer = Timer(msg, message.channel)
+      await timer.start_timer()
+    elif is_starts_with(msg, 'inspire'):
       await message.channel.send(quote.get_random())
-    elif "bitcoin" in msg or "blockchain" in msg or "btc" in msg:
+    elif is_starts_with(msg, 'bitcoin'):
       await message.channel.send(blockchain.get_exchange())
-    elif "gif" in msg:
-      await message.channel.send(gif.get_random())
-    elif "coin" in msg or "flip" in msg:
+    elif is_starts_with(msg, 'gif'):
+      await message.channel.send(gif.get_random(msg))
+    elif is_starts_with(msg, 'toss'):
       await message.channel.send(gamble.coin_flip())
-    elif "random" in msg:
+    elif is_starts_with(msg, 'random'):
       await message.channel.send(gamble.get_random_number(msg)) 
-    elif "corona" in msg or "korona" in msg:
+    elif is_starts_with(msg, 'corona'):
       await message.channel.send(corona.get_country_data(msg))
-    elif "convert" in msg or "conv" in msg or "ex" in msg or "dolar" in msg:
+    elif is_starts_with(msg, 'exchange'):
       await message.channel.send(exchange.get_currency_exchange_rate(msg))
+    elif is_starts_with(msg, 'investing'):
+      await message.channel.send(investing.get_btc_usd(msg))
     elif calculator.is_equation(msg):
-      await message.channel.send(calculator.calculate(msg))
+      await message.channel.send(calculator.calculate())
     
 
-
+keep_alive()
 client.run(os.getenv('DISCORD_TOKEN'))
