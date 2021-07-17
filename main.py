@@ -11,6 +11,7 @@ from investing import Investing
 from timer import Timer
 from keep_alive import keep_alive
 from help_me import help1,help2
+from taboo import Taboo
 
 client = discord.Client()
 gif = Gif(os.getenv('GIPHY_API_KEY'))
@@ -21,6 +22,7 @@ investing = Investing()
 quote = Quote()
 calculator = Calculator()
 gamble = Gamble()
+taboo = Taboo()
 
 category_words={
   "hi": ['hi', 'hello', 'hey'],
@@ -34,7 +36,8 @@ category_words={
   "corona": ['corona', 'covid', 'korona'],
   "exchange": ['exchange', 'convert', 'e', 'dollar', 'dolar', 'usd'],
   "investing": ['investing', 'inv', 'i'],
-  "help": ['help', 'h']
+  "help": ['help', 'h'],
+  "taboo": ['taboo', 'tabu']
 }
 
 
@@ -69,10 +72,10 @@ async def on_message(message):
     elif is_starts_with(msg, 'inspire'):
       await message.channel.send(quote.get_random())
     elif is_starts_with(msg, 'bitcoin'):
-      await message.channel.send(blockchain.get_exchange())
+      await message.channel.send(investing.get_btc_usd(msg))
     elif is_starts_with(msg, 'gif'):
       await message.channel.send(gif.get_random(msg))
-    elif is_starts_with(msg, 'toss'):
+    elif is_starts_with(msg, 'coin'):
       await message.channel.send(gamble.coin_flip())
     elif is_starts_with(msg, 'random'):
       await message.channel.send(gamble.get_random_number(msg)) 
@@ -82,6 +85,18 @@ async def on_message(message):
       await message.channel.send(exchange.get_currency_exchange_rate(msg))
     elif is_starts_with(msg, 'investing'):
       await message.channel.send(investing.get_btc_usd(msg))
+    elif is_starts_with(msg, 'taboo'):
+      await message.author.send(taboo.get_random(msg))
+    elif msg.startswith('fifa'):
+      await message.channel.send('FIFA KONUŞMAYIN MQ YETER')
+    elif msg.startswith('mc'):
+      await message.channel.send('FIFA KONUŞMAYIN MQ YETER')
+    elif msg.startswith('malbahran'):
+      await message.channel.send('MAL BAHRAN', tts=True)
+    elif msg.startswith('helalbahran'):
+      await message.channel.send('HELAL BAHRAN', tts=True)
+    elif msg.startswith('atmeren'):
+      await message.channel.send('ATM EREN', tts=True)
     elif calculator.is_equation(msg):
       await message.channel.send(calculator.calculate())
     

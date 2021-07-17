@@ -45,23 +45,23 @@ class Timer:
 
     self.msg = await self.channel.send(embed=embed)
 
-    self.thread = threading.Thread(target=await self.update_timer())
+    self.thread = threading.Thread(target=await self.update_timer(time.time()))
     self.thread.start()
 
-  async def update_timer(self):
+  async def update_timer(self, start_time):
     is_finished = False
     while not is_finished:
-      time.sleep(1)
+      time_left = self.time - (time.time()-start_time)
 
-      self.time -= 1
-
-      if self.time <= 0:
+      if time_left <= 0:
         embed = discord.Embed(title=self.title, description= "TIME IS UP!")
         is_finished = True
       else:
-        embed = discord.Embed(title=self.title, description= "Remaining time\n" + secs_to_hhmmss(self.time))
+        embed = discord.Embed(title=self.title, description= "Remaining time\n" + secs_to_hhmmss(time_left))
       
       await self.msg.edit(embed=embed)
+
+      time.sleep(1)
 
       
 
